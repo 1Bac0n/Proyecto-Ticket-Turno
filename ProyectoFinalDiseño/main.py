@@ -8,7 +8,7 @@ sys.path.append(script_dir)
 from vista.vista_login import VistaLogin
 from modelo.usuario_model import Usuario
 from controlador.controlador_login  import ControladorLogin
-from modelo.database_manager import DatabaseManager # Importante
+from modelo.database_manager import DatabaseManager 
 
 class Aplicacion:
     def __init__(self):

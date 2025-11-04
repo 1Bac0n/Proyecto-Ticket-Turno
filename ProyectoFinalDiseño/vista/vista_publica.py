@@ -20,9 +20,7 @@ class VistaPublica(ctk.CTkToplevel):
         self.tabs.add("Registrar Cita")
         self.tabs.add("Consultar / Modificar Cita")
 
-        # ======================================================
-        # --- Pestaña 1: Registrar Cita ---
-        # ======================================================
+        
         tab_registrar = self.tabs.tab("Registrar Cita")
         
         scroll_frame = ctk.CTkScrollableFrame(tab_registrar)
@@ -101,12 +99,12 @@ class VistaPublica(ctk.CTkToplevel):
         self.lbl_mensaje_registrar.pack(fill="x", padx=20, pady=10)
 
 
-        # ======================================================
-        # --- Pestaña 2: Consultar / Modificar Cita ---
-        # ======================================================
+        
+      
+      
         tab_modificar = self.tabs.tab("Consultar / Modificar Cita")
         
-        # (Por ahora la dejamos como placeholder)
+      
         ctk.CTkLabel(tab_modificar, text="Aquí podrás consultar o modificar tu cita.").pack(pady=20)
         ctk.CTkLabel(tab_modificar, text="Ingresa tu CURP:").pack(pady=(10,0))
         self.entry_curp_mod = ctk.CTkEntry(tab_modificar, width=300)

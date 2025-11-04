@@ -73,7 +73,7 @@ class Cita:
             existe = self.cursor.fetchone()
 
             if existe:
-                # --- ACTUALIZAR (Update) ---
+                
                 self.numero_turno = existe[0]
                 
                 admin_fields = ", estatus = ?" if es_admin else ""
@@ -96,7 +96,7 @@ class Cita:
                 self.cursor.execute(sql, valores)
                 
             else:
-                # --- CREAR (Create) ---
+                
                 self.numero_turno = self._get_next_turno()
                 if self.numero_turno is None:
                     return False, "Error al generar el número de turno."
@@ -126,7 +126,7 @@ class Cita:
             self.conn.rollback()
             return False, f"Error de base de datos: {e}"
 
-    # --- Métodos para el Administrador ---
+    #  Métodos para el Administrador 
 
     @staticmethod
     def get_by_curp_o_nombre(filtro):
@@ -161,7 +161,7 @@ class Cita:
             print(f"Error al eliminar: {e}")
             return False
 
-    # --- Métodos para el Dashboard ---
+    # Métodos para el Dashboard 
 
     @staticmethod
     def get_stats_dashboard(id_municipio=None):
@@ -214,7 +214,7 @@ class Cita:
             db.get_connection().rollback()
             return False
 
-    # --- ¡ESTA ES LA FUNCIÓN QUE FALTABA! ---
+    
     @staticmethod
     def get_by_curp_and_turno(curp, turno):
         """

@@ -18,8 +18,7 @@ class Usuario:
             db = DatabaseManager()
             cursor = db.get_cursor()
             
-            # ATENCIÓN: En un proyecto real, la contraseña NUNCA se guarda en texto plano.
-            # Se usaría un hash (ej. bcrypt). Por simplicidad del proyecto, lo hacemos así.
+           
             cursor.execute(
                 "SELECT id_usuario FROM Usuario WHERE username = ? AND password = ?",
                 (username, password)
@@ -34,7 +33,7 @@ class Usuario:
                 # Credenciales incorrectas
                 return False
         
-        # --- ESTA ES LA LÍNEA CORREGIDA ---
+       
         except sqlite3.Error as e:
             print(f"Error verificando credenciales: {e}")
             return False

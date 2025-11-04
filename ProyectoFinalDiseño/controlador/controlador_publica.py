@@ -16,7 +16,7 @@ class ControladorPublica:
         
         # Conectar botones
         self.vista.btn_guardar_cita.configure(command=self._guardar_cita)
-        # --- LÍNEA AÑADIDA ---
+     
         self.vista.btn_buscar_mod.configure(command=self._buscar_cita_modificar)
         
         # Cargar datos iniciales
@@ -49,8 +49,7 @@ class ControladorPublica:
         (ya sea para crear una NUEVA cita o ACTUALIZAR una existente).
         """
         try:
-            # --- MODIFICADO ---
-            # Habilitar temporalmente el campo CURP para leerlo si está deshabilitado
+           
             self.vista.entry_curp.configure(state="normal")
             
             # 1. Recolectar todos los datos de la vista
@@ -94,17 +93,16 @@ class ControladorPublica:
             # 4. Guardar (El modelo Cita se encarga de validar CURP y asignar turno)
             exito, mensaje = nueva_cita.save(es_admin=False)
             
-            # --- BLOQUE 'if exito:' COMPLETAMENTE REEMPLAZADO ---
+           
             if exito:
-                # ¡Éxito!
-                # Verificamos si el botón decía "Guardar Cambios"
+                
                 if self.vista.btn_guardar_cita.cget("text") == "Guardar Cambios":
-                    # Fue una ACTUALIZACIÓN
+                   
                     self.vista.lbl_mensaje_registrar.configure(
                         text=f"¡Cita {curp} actualizada con éxito!",
                         text_color="green")
                 else:
-                    # Fue un REGISTRO NUEVO
+                   
                     turno_asignado = mensaje # 'mensaje' aquí es el número de turno
                     self.vista.lbl_mensaje_registrar.configure(
                         text=f"¡Cita registrada con éxito!\nSu número de turno es: {turno_asignado}",
@@ -127,7 +125,7 @@ class ControladorPublica:
             if self.vista.btn_guardar_cita.cget("text") != "Guardar Cambios":
                  self.vista.entry_curp.configure(state="normal")
 
-    # --- FUNCIONES NUEVAS AÑADIDAS AL FINAL ---
+   
     
     def _buscar_cita_modificar(self):
         """
@@ -200,7 +198,6 @@ class ControladorPublica:
                 break
         self.vista.combo_municipio.set(nombre_muni_encontrado)
         
-        # --- Importante ---
-        # Cambiar el botón y deshabilitar la CURP (PK no se cambia)
+      
         self.vista.btn_guardar_cita.configure(text="Guardar Cambios")
         self.vista.entry_curp.configure(state="disabled")
