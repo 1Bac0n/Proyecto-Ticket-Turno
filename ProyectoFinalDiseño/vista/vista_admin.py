@@ -48,14 +48,31 @@ class VistaAdmin(ctk.CTk):
         self.btn_buscar_cita.pack(side="left", padx=5)
 
         # Frame para los resultados (por ahora un área de texto)
-        self.resultados_citas = ctk.CTkTextbox(tab_citas, font=("Consolas", 12))
-        self.resultados_citas.pack(fill="both", expand=True, padx=10, pady=10)
-        self.resultados_citas.insert("0.0", "Aquí se mostrarán los resultados de la búsqueda...")
+        self.frame_lista_citas = ctk.CTkScrollableFrame(tab_citas)
+        self.frame_lista_citas.pack(fill="both", expand=True, padx=10, pady=10)
+        self.frames_citas = {}
 
         # Frame para botones de acción (Modificar, Eliminar, Cambiar Estatus)
         frame_acciones_citas = ctk.CTkFrame(tab_citas)
         frame_acciones_citas.pack(fill="x", padx=10, pady=10)
         # (Añadiremos los botones de editar/eliminar/estatus aquí)
+
+        # (Justo debajo del bloque anterior)
+
+        self.btn_eliminar_cita = ctk.CTkButton(frame_acciones_citas, 
+                                         text="Eliminar Cita Seleccionada", 
+                                         fg_color="red")
+        self.btn_eliminar_cita.pack(side="left", padx=10, pady=5)
+
+        self.btn_resolver_cita = ctk.CTkButton(frame_acciones_citas, 
+                                         text="Marcar como Resuelto", 
+                                         fg_color="green")
+        self.btn_resolver_cita.pack(side="left", padx=10, pady=5)
+
+        self.btn_poner_pendiente_cita = ctk.CTkButton(frame_acciones_citas, 
+                                                text="Marcar como Pendiente", 
+                                                fg_color="orange")
+        self.btn_poner_pendiente_cita.pack(side="left", padx=10, pady=5)
 
         # --- 2. Contenido de la Pestaña "Gestión de Municipios" (Catálogo) ---
         tab_municipios = self.tab_view.tab("Gestión de Municipios")

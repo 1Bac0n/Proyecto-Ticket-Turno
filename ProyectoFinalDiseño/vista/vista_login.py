@@ -58,6 +58,10 @@ class VistaLogin(ctk.CTk):
                                           font=ctk.CTkFont(weight="bold"))
         self.btn_ingresar.pack(pady=(20, 10))
 
+        ctk.CTkLabel(frame_principal, text="¿Eres padre de familia?").pack(pady=(20, 5))
+        self.btn_registrar_publico = ctk.CTkButton(frame_principal, text="Registrar Cita", width=250,fg_color="gray")
+        self.btn_registrar_publico.pack(pady=(0, 10))
+
         # Mensaje de error (inicialmente vacío)
         self.lbl_mensaje = ctk.CTkLabel(frame_principal, 
                                         text="", 

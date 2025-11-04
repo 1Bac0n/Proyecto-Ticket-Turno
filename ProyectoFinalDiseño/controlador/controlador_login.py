@@ -3,6 +3,9 @@ from modelo.usuario_model import Usuario
 from vista.vista_login import VistaLogin 
 from vista.vista_admin import VistaAdmin
 from controlador.controlador_admin import ControladorAdmin
+from vista.vista_publica import VistaPublica
+from controlador.controlador_publica import ControladorPublica
+
 class ControladorLogin:
     
     def __init__(self, vista, modelo):
@@ -11,6 +14,7 @@ class ControladorLogin:
         
         # Conectamos el botón de la vista a un método de este controlador
         self.vista.btn_ingresar.configure(command=self._handle_login)
+        self.vista.btn_registrar_publico.configure(command=self._abrir_ventana_publica)
 
     def _handle_login(self):
         """
@@ -54,3 +58,16 @@ class ControladorLogin:
 
         # 3. Iniciamos el bucle de la nueva ventana
         self.vista_admin.mainloop()
+
+    # --- ¡AQUÍ ESTÁ LA FUNCIÓN CORREGIDA Y MOVIDA DENTRO DE LA CLASE! ---
+    def _abrir_ventana_publica(self):
+        """
+        Abre la ventana emergente para el registro de citas públicas.
+        """
+        print("Abriendo la Vista Pública...")
+        # Le pasamos 'self.vista' para que la nueva ventana sea "hija" de la de login
+        vista_publica = VistaPublica(parent=self.vista)
+        # Creamos su controlador para que tenga lógica
+        controlador_publica = ControladorPublica(vista_publica)
+
+        # (No necesita mainloop porque es un Toplevel que depende del login)
