@@ -7,7 +7,7 @@ class VistaAdmin(ctk.CTk):
         super().__init__()
 
         self.title("Panel de Administrador - Sistema de Turnos")
-        self.geometry("1100x700") # Un tamaño más grande
+        self.geometry("1100x700") 
 
         # --- Frame Superior (para el menú/botón de salida) ---
         frame_top = ctk.CTkFrame(self, height=50)
@@ -98,11 +98,11 @@ class VistaAdmin(ctk.CTk):
         self.btn_nuevo_muni = ctk.CTkButton(frame_form_muni, text="Nuevo", fg_color="gray")
         self.btn_nuevo_muni.pack(side="left", padx=5)
 
-        # Frame con scroll para la lista de municipios (ESTA ES LA PARTE CORREGIDA)
+        # Frame con scroll para la lista de municipios 
         self.frame_lista_municipios = ctk.CTkScrollableFrame(tab_municipios)
         self.frame_lista_municipios.pack(fill="both", expand=True, padx=10, pady=10)
         
-        # Y ESTA LÍNEA ESTÁ AHORA DENTRO DE __init__
+        
         self.labels_municipios = {} 
 
         # --- 3. Contenido de la Pestaña "Dashboard" ---
@@ -129,7 +129,7 @@ class VistaAdmin(ctk.CTk):
         lbl_placeholder_grafica = ctk.CTkLabel(self.frame_grafica, text="[AQUÍ VA LA GRÁFICA DE MATPLOTLIB]", font=("Arial", 20))
         lbl_placeholder_grafica.place(relx=0.5, rely=0.5, anchor="center")
 
-# --- Bloque para probar la vista (opcional) ---
+# --- Bloque para probar la vista ---
 if __name__ == "__main__":
     app = VistaAdmin()
     app.mainloop()

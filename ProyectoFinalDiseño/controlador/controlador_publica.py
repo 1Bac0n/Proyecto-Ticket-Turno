@@ -11,10 +11,8 @@ class ControladorPublica:
         self.municipio_model = Municipio
         self.cita_model = Cita
         
-        # Guardamos los municipios (id -> nombre)
         self.mapa_municipios = {} 
         
-        # Conectar botones
         self.vista.btn_guardar_cita.configure(command=self._guardar_cita)
         # Conectar botones de la pestaña de modificación pública (si existen)
         try:
@@ -26,7 +24,6 @@ class ControladorPublica:
             # Si la vista no tiene aún esos widgets, no hacemos nada
             pass
         
-        # Cargar datos iniciales
         self._cargar_municipios()
 
     def _cargar_municipios(self):
@@ -34,14 +31,13 @@ class ControladorPublica:
         Obtiene los municipios del modelo y los pone en el ComboBox.
         """
         try:
-            municipios_tuplas = self.municipio_model.get_all() # [(1, 'Saltillo'), (2, 'Ramos')]
+            municipios_tuplas = self.municipio_model.get_all()
             
             nombres_municipios = []
             for id_muni, nombre in municipios_tuplas:
                 nombres_municipios.append(nombre)
-                self.mapa_municipios[nombre] = id_muni # Guardamos el ID
+                self.mapa_municipios[nombre] = id_muni
             
-            # Actualizamos el ComboBox en la vista
             self.vista.combo_municipio.configure(values=nombres_municipios)
             # Si la vista tiene el combo de modificación, actualizarlo también
             try:
@@ -51,7 +47,7 @@ class ControladorPublica:
             except Exception:
                 pass
             if nombres_municipios:
-                self.vista.combo_municipio.set(nombres_municipios[0]) # Seleccionar el primero
+                self.vista.combo_municipio.set(nombres_municipios[0])
             
         except Exception as e:
             print(f"Error cargando municipios: {e}")
@@ -59,9 +55,12 @@ class ControladorPublica:
 
     def _guardar_cita(self):
         """
-        Toma todos los datos del formulario, los valida y los guarda.
+        Toma todos los datos del formulario, los valida y los guarda
+        (ya sea para crear una NUEVA cita o ACTUALIZAR una existente).
         """
         try:
+            self.vista.entry_curp.configure(state="normal")
+            
             # 1. Recolectar todos los datos de la vista
             curp = self.vista.entry_curp.get().upper()
             nombre_tutor = self.vista.entry_nombre_tutor.get()
@@ -71,18 +70,36 @@ class ControladorPublica:
             telefono = self.vista.entry_telefono.get()
             correo = self.vista.entry_correo.get()
             nivel = self.vista.combo_nivel.get()
-            asunto = self.vista.entry_asunto.get("1.0", "end-1c") # Obtener texto del Textbox
+            asunto = self.vista.entry_asunto.get("1.0", "end-1c")
             
-            # Obtener ID del municipio desde el mapa que creamos
             nombre_municipio_sel = self.vista.combo_municipio.get()
             id_municipio_sel = self.mapa_municipios.get(nombre_municipio_sel)
+            
+            # Verificamos la intención del usuario
+            modo_modificar = (self.vista.btn_guardar_cita.cget("text") == "Guardar Cambios")
 
             # 2. Validaciones básicas
             if not all([curp, nombre_tutor, nombre_alumno, paterno_alumno, id_municipio_sel]):
                 messagebox.showerror("Error de Validación", 
                                      "Los campos con * son obligatorios:\n- CURP\n- Nombre Tutor\n- Nombre Alumno\n- Paterno Alumno\n- Municipio",
                                      parent=self.vista)
+                # Re-deshabilitar CURP si estábamos modificando
+                if modo_modificar:
+                    self.vista.entry_curp.configure(state="disabled")
                 return
+
+            # --- ¡¡AQUÍ ESTÁ LA NUEVA REGLA DE NEGOCIO!! ---
+            # Si NO estamos en modo modificar (o sea, es un registro nuevo)
+            if not modo_modificar:
+                # Verificamos si ya hay una cita pendiente con esa CURP
+                if self.cita_model.check_pending(curp):
+                    messagebox.showerror("Registro Bloqueado",
+                                         "Ya existe una cita 'Pendiente' con esta CURP.\nNo puede registrar una nueva hasta que la anterior sea 'Resuelta'.",
+                                         parent=self.vista)
+                    # Dejamos la CURP editable
+                    self.vista.entry_curp.configure(state="normal")
+                    return
+            # --- FIN DE LA NUEVA REGLA ---
 
             # 3. Crear el objeto Cita
             nueva_cita = self.cita_model(
@@ -95,23 +112,39 @@ class ControladorPublica:
                 telefono_contacto=telefono,
                 correo_contacto=correo,
                 nivel_educativo=nivel,
-                asunto=asunto
+                asunto=asunto,
+                # Si es admin, puede que quiera cambiar el estatus,
+                # pero el público siempre la pone 'Pendiente' al guardar.
+                estatus="Pendiente" 
             )
             
             # 4. Guardar (El modelo Cita se encarga de validar CURP y asignar turno)
             exito, mensaje = nueva_cita.save(es_admin=False)
             
             if exito:
-                # ¡Éxito! Mostramos el número de turno (comprobante)
-                turno_asignado = mensaje
-                self.vista.lbl_mensaje_registrar.configure(
-                    text=f"¡Cita registrada con éxito!\nSu número de turno es: {turno_asignado}",
-                    text_color="green")
-                # (Opcional: deshabilitar el botón para no registrar dos veces)
+                # ¡Éxito!
+                turno_asignado = mensaje # El modelo ahora SIEMPRE devuelve el turno
+                
+                if modo_modificar:
+                    # Fue una ACTUALIZACIÓN
+                    self.vista.lbl_mensaje_registrar.configure(
+                        text=f"¡Cita {curp} actualizada con éxito!\nSu número de turno sigue siendo: {turno_asignado}",
+                        text_color="green")
+                else:
+                    # Fue un REGISTRO NUEVO
+                    self.vista.lbl_mensaje_registrar.configure(
+                        text=f"¡Cita registrada con éxito!\nSu número de turno es: {turno_asignado}",
+                        text_color="green")
+
                 self.vista.btn_guardar_cita.configure(state="disabled")
+                self.vista.entry_curp.configure(state="disabled")
+                
             else:
                 # Error (Ej. CURP inválida, BD, etc.)
                 messagebox.showerror("Error al Guardar", mensaje, parent=self.vista)
+                # Si falló, volvemos a habilitar la CURP (si no estaba en modo "Guardar Cambios")
+                if not modo_modificar:
+                     self.vista.entry_curp.configure(state="normal")
 
         except Exception as e:
             messagebox.showerror("Error Inesperado", f"Ocurrió un error: {e}", parent=self.vista)

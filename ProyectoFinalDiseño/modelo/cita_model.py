@@ -54,15 +54,15 @@ class Cita:
                 "SELECT MAX(numero_turno) FROM Cita WHERE id_municipio = ?",
                 (self.id_municipio,)
             )
-            max_turno = self.cursor.fetchone()[0] # [0] para obtener el valor
+            max_turno = self.cursor.fetchone()[0]
             
             if max_turno is None:
-                return 1 # Es el primer turno de este municipio
+                return 1
             else:
                 return max_turno + 1
         except sqlite3.Error as e:
             print(f"Error calculando el siguiente turno: {e}")
-            return None # Indicar un error
+            return None
 
     def save(self, es_admin=False):
         """
@@ -151,7 +151,9 @@ class Cita:
             return True, self.numero_turno
             
             self.conn.commit()
-            return True, self.numero_turno 
+            
+            # Devolvemos el número de turno en ambos casos (Crear o Actualizar)
+            return True, self.numero_turno
 
         except sqlite3.Error as e:
             print(f"Error al guardar la cita: {e}")
@@ -219,7 +221,7 @@ class Cita:
     def get_stats_dashboard(id_municipio=None):
         """
         Obtiene los conteos de estatus (Pendiente, Resuelto)
-        para el dashboard. Si id_municipio es None, obtiene el total.
+        para el dashboard.
         """
         try:
             db = DatabaseManager()
@@ -240,7 +242,6 @@ class Cita:
             print(f"Error obteniendo estadísticas: {e}")
             return [('Pendiente', 0), ('Resuelto', 0)]
     
-    # --- ¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA, AHORA DENTRO DE LA CLASE! ---
     @staticmethod
     def actualizar_estatus(curp, nuevo_estatus):
         """
@@ -260,11 +261,66 @@ class Cita:
             )
             db.get_connection().commit()
             
-            # cursor.rowcount nos dice cuántas filas se afectaron.
-            # Si es > 0, significa que se actualizó.
             return cursor.rowcount > 0 
             
         except sqlite3.Error as e:
             print(f"Error al actualizar estatus: {e}")
             db.get_connection().rollback()
             return False
+
+    @staticmethod
+    def get_by_curp_and_turno(curp, turno):
+        """
+        Busca una cita específica por CURP y Número de Turno.
+        Devuelve los datos de la cita si la encuentra, o None si no.
+        """
+        try:
+            db = DatabaseManager()
+            cursor = db.get_cursor()
+            
+            cursor.row_factory = sqlite3.Row 
+            
+            cursor.execute(
+                "SELECT * FROM Cita WHERE curp_alumno = ? AND numero_turno = ?",
+                (curp, int(turno))
+            )
+            
+            resultado = cursor.fetchone()
+            cursor.row_factory = None 
+            
+            if resultado:
+                return dict(resultado)
+            else:
+                return None
+                
+        except (sqlite3.Error, ValueError) as e:
+            print(f"Error al buscar por CURP y Turno: {e}")
+            return None
+
+    # --- ¡¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA, DENTRO DE LA CLASE!! ---
+    @staticmethod
+    def check_pending(curp):
+        """
+        Verifica si existe una cita 'Pendiente' con una CURP específica.
+        Devuelve True si existe, False si no.
+        """
+        try:
+            db = DatabaseManager()
+            cursor = db.get_cursor()
+            cursor.row_factory = None # Asegurar que no sea un dict
+
+            cursor.execute(
+                "SELECT 1 FROM Cita WHERE curp_alumno = ? AND estatus = 'Pendiente'",
+                (curp,)
+            )
+            
+            resultado = cursor.fetchone()
+            
+            if resultado:
+                return True # Sí, existe una pendiente
+            else:
+                return False # No existe una pendiente
+                
+        except sqlite3.Error as e:
+            print(f"Error en check_pending: {e}")
+            return False # Asumir que no por seguridad

@@ -10,9 +10,9 @@ class DatabaseManager:
         """
         if cls._instance is None:
             print("Creando NUEVA instancia del DatabaseManager.")
-            # Crea la nueva instancia llamando al __new__ de la clase padre (object)
+            
             cls._instance = super(DatabaseManager, cls).__new__(cls)
-            cls._instance.initialized = False  # Bandera para el __init__
+            cls._instance.initialized = False  
         else:
             print("Usando instancia EXISTENTE del DatabaseManager.")
         
@@ -25,7 +25,7 @@ class DatabaseManager:
         Usamos la bandera 'initialized' para correr la conexión una sola vez.
         """
         if self.initialized:
-            return  # Si ya está inicializado, no hacer nada.
+            return  
 
         print("Inicializando conexión a la BD...")
         try:
@@ -77,13 +77,11 @@ class DatabaseManager:
         )
         """)
 
-        # --- Datos de ejemplo ---
-        
-        # Insertar un usuario admin por defecto (en un proyecto real, la clave iría 'hasheada')
+      
         try:
             self.cursor.execute("INSERT INTO Usuario (username, password) VALUES ('admin', 'admin123')")
         except sqlite3.IntegrityError:
-            pass  # El usuario 'admin' ya existe
+            pass  
 
         # Insertar municipios de ejemplo (catálogo)
         try:
@@ -107,7 +105,7 @@ class DatabaseManager:
         """Cierra la conexión a la base de datos."""
         # Requerido por el proyecto
         if self.conn:
-            self.conn.commit() # Asegurar que se guarde todo antes de cerrar
+            self.conn.commit() 
             self.conn.close()
             print("Conexión a la BD cerrada.")
             # Reseteamos la instancia para futuras pruebas (opcional, pero útil)

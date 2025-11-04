@@ -1,5 +1,5 @@
 # modelo/municipio_model.py
-import sqlite3 # <--- AÑADIDO
+import sqlite3 
 from .database_manager import DatabaseManager
 
 class Municipio:
@@ -17,21 +17,21 @@ class Municipio:
         """
         try:
             if self.id_municipio is None:
-                # --- Crear (Create) ---
+               
                 self.cursor.execute(
                     "INSERT INTO Municipio (nombre) VALUES (?)",
                     (self.nombre,)
                 )
                 self.id_municipio = self.cursor.lastrowid # Obtenemos el ID generado
             else:
-                # --- Actualizar (Update) ---
+                
                 self.cursor.execute(
                     "UPDATE Municipio SET nombre = ? WHERE id_municipio = ?",
                     (self.nombre, self.id_municipio)
                 )
             self.conn.commit()
             return True
-        except sqlite3.Error as e: # <--- CORREGIDO
+        except sqlite3.Error as e: 
             print(f"Error guardando municipio: {e}")
             return False
 
@@ -41,14 +41,14 @@ class Municipio:
         """
         if self.id_municipio:
             try:
-                # --- Borrar (Delete) ---
+                
                 self.cursor.execute(
                     "DELETE FROM Municipio WHERE id_municipio = ?",
                     (self.id_municipio,)
                 )
                 self.conn.commit()
                 return True
-            except sqlite3.Error as e: # <--- CORREGIDO
+            except sqlite3.Error as e:
                 print(f"Error borrando municipio: {e}")
                 return False
         return False
@@ -62,11 +62,11 @@ class Municipio:
         try:
             db = DatabaseManager()
             cursor = db.get_cursor()
-            # --- Leer (Read) ---
+         
             cursor.execute("SELECT id_municipio, nombre FROM Municipio ORDER BY nombre")
             # Devolvemos una lista de tuplas (id, nombre)
             return cursor.fetchall() 
-        except sqlite3.Error as e: # <--- CORREGIDO
+        except sqlite3.Error as e: 
             print(f"Error obteniendo todos los municipios: {e}")
             return []
 
@@ -81,6 +81,6 @@ class Municipio:
             if row:
                 return Municipio(id_municipio=row[0], nombre=row[1])
             return None
-        except sqlite3.Error as e: # <--- CORREGIDO
+        except sqlite3.Error as e: 
             print(f"Error obteniendo municipio por ID: {e}")
             return None

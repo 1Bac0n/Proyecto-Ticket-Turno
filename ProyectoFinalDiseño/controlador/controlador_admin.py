@@ -33,7 +33,7 @@ class ControladorAdmin:
         self.vista.btn_resolver_cita.configure(command=self._marcar_cita_resuelta)
         self.vista.btn_poner_pendiente_cita.configure(command=self._marcar_cita_pendiente)
         
-        # 3. Pestaña de Dashboard (NUEVO)
+        # 3. Pestaña de Dashboard 
         self.vista.btn_refrescar_dash.configure(command=self._actualizar_dashboard)
         
         # 4. Botón de Cerrar Sistema
@@ -42,8 +42,8 @@ class ControladorAdmin:
         # --- Inicializar la vista ---
         self._actualizar_lista_municipios()
         self._limpiar_form_municipio()
-        self._cargar_combobox_dashboard() # (NUEVO)
-        self._actualizar_dashboard()      # (NUEVO)
+        self._cargar_combobox_dashboard() 
+        self._actualizar_dashboard()      
 
     # --- Métodos de Gestión de Municipios ---
     
@@ -294,7 +294,7 @@ class ControladorAdmin:
         else:
             print("Error al actualizar el estatus.")
 
-    # --- Métodos del Dashboard (¡NUEVOS!) ---
+  
     
     def _cargar_combobox_dashboard(self):
         """
@@ -354,7 +354,7 @@ class ControladorAdmin:
         
         ax = fig.add_subplot(111)
         
-        barras = ax.bar(labels, valores, color=["#FF8C00", "#4CAF50"]) # Naranja y Verde
+        barras = ax.bar(labels, valores, color=["#FF8C00", "#4CAF50"]) 
         ax.set_title("Estatus de Citas", color="white")
         ax.set_ylabel("Cantidad de Citas", color="white")
         

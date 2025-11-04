@@ -2,17 +2,13 @@
 import sys
 import os
 
-# --- Esto es un truco para que Python encuentre tus carpetas ---
-# Añade la carpeta principal del proyecto a la ruta de búsqueda
-# para que podamos importar 'modelo', 'vista', etc.
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(script_dir)
-# -------------------------------------------------------------
 
 from vista.vista_login import VistaLogin
 from modelo.usuario_model import Usuario
-from controlador.controlador_login import ControladorLogin
-from modelo.database_manager import DatabaseManager # Importante
+from controlador.controlador_login  import ControladorLogin
+from modelo.database_manager import DatabaseManager 
 
 class Aplicacion:
     def __init__(self):

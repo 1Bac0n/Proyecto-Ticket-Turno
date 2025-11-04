@@ -2,8 +2,8 @@
 import customtkinter as ctk
 
 # Configuramos el tema de la aplicación
-ctk.set_appearance_mode("dark")  # O "light"
-ctk.set_default_color_theme("blue") # O "green", "dark-blue"
+ctk.set_appearance_mode("dark")  
+ctk.set_default_color_theme("blue") 
 
 class VistaLogin(ctk.CTk):
     
@@ -12,7 +12,7 @@ class VistaLogin(ctk.CTk):
 
         # --- Configuración de la Ventana Principal ---
         self.title("Sistema de Turnos - Login")
-        self.geometry("400x500") # Tamaño de la ventana (ancho x alto)
+        self.geometry("400x500") 
         self.resizable(False, False)
         
         # --- Frame Principal ---
@@ -26,7 +26,7 @@ class VistaLogin(ctk.CTk):
         self.lbl_titulo = ctk.CTkLabel(frame_principal, 
                                        text="Acceso de Administrador", 
                                        font=ctk.CTkFont(size=20, weight="bold"))
-        self.lbl_titulo.pack(pady=(20, 20)) # (padding_top, padding_bottom)
+        self.lbl_titulo.pack(pady=(20, 20)) 
 
         # Campo de Usuario
         self.lbl_usuario = ctk.CTkLabel(frame_principal, 
