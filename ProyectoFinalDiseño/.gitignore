@@ -1,0 +1,5 @@
+# Ignorar la base de datos
+citas.db
+
+# Ignorar la carpeta de caché de Python
+__pycache__/
