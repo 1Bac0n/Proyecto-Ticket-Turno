@@ -267,6 +267,9 @@ class ControladorPublica:
                 asunto=asunto
             )
 
+            # Asegurar que actualizamos la cita correcta (CURP + número de turno)
+            cita.numero_turno = numero_turno
+
             exito, mensaje = cita.save(es_admin=False)
             if exito:
                 messagebox.showinfo("Guardado", f"Cambios guardados. Número de turno: {mensaje}", parent=self.vista)

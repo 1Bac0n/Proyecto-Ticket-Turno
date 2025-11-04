@@ -1,5 +1,7 @@
 ﻿# Ignorar la base de datos del subproyecto
 ProyectoFinalDiseño/citas.db
+# Ignorar la base de datos en la raíz (por si alguien la creó ahí)
+citas.db
 
 # Ignorar caché de Python y archivos compilados
 __pycache__/
