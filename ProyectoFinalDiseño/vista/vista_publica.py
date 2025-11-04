@@ -118,3 +118,59 @@ class VistaPublica(ctk.CTkToplevel):
         
         self.btn_buscar_mod = ctk.CTkButton(tab_modificar, text="Buscar Cita para Modificar")
         self.btn_buscar_mod.pack(pady=20)
+        
+        # --- Área para mostrar y editar la cita encontrada ---
+        self.frame_mod = ctk.CTkScrollableFrame(tab_modificar)
+        self.frame_mod.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Mensaje si no se encuentra
+        self.lbl_mensaje_mod = ctk.CTkLabel(self.frame_mod, text="", font=ctk.CTkFont(size=12))
+        self.lbl_mensaje_mod.pack(fill="x", padx=10, pady=(0,10))
+
+        # Nombre Tutor
+        ctk.CTkLabel(self.frame_mod, text="Nombre Completo del Tutor:").pack(anchor="w", padx=10)
+        self.entry_nombre_tutor_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_nombre_tutor_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Nombre Alumno
+        ctk.CTkLabel(self.frame_mod, text="Nombre(s) del Alumno:").pack(anchor="w", padx=10)
+        self.entry_nombre_alumno_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_nombre_alumno_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Apellidos
+        ctk.CTkLabel(self.frame_mod, text="Apellido Paterno:").pack(anchor="w", padx=10)
+        self.entry_paterno_alumno_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_paterno_alumno_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        ctk.CTkLabel(self.frame_mod, text="Apellido Materno:").pack(anchor="w", padx=10)
+        self.entry_materno_alumno_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_materno_alumno_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Contacto
+        ctk.CTkLabel(self.frame_mod, text="Teléfono de Contacto:").pack(anchor="w", padx=10)
+        self.entry_telefono_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_telefono_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        ctk.CTkLabel(self.frame_mod, text="Correo de Contacto:").pack(anchor="w", padx=10)
+        self.entry_correo_mod = ctk.CTkEntry(self.frame_mod)
+        self.entry_correo_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Nivel Educativo
+        ctk.CTkLabel(self.frame_mod, text="Nivel que cursa el alumno:").pack(anchor="w", padx=10)
+        niveles = ["Preescolar", "Primaria", "Secundaria", "Preparatoria", "Universidad"]
+        self.combo_nivel_mod = ctk.CTkComboBox(self.frame_mod, values=niveles)
+        self.combo_nivel_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Municipio
+        ctk.CTkLabel(self.frame_mod, text="Municipio donde estudia:").pack(anchor="w", padx=10)
+        self.combo_municipio_mod = ctk.CTkComboBox(self.frame_mod, values=["Cargando..."])
+        self.combo_municipio_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Asunto
+        ctk.CTkLabel(self.frame_mod, text="Asunto a tratar:").pack(anchor="w", padx=10)
+        self.entry_asunto_mod = ctk.CTkTextbox(self.frame_mod, height=100)
+        self.entry_asunto_mod.pack(fill="x", padx=10, pady=(0,8))
+
+        # Botón para guardar cambios desde la vista pública
+        self.btn_guardar_mod = ctk.CTkButton(self.frame_mod, text="Guardar Cambios")
+        self.btn_guardar_mod.pack(fill="x", padx=10, pady=12)

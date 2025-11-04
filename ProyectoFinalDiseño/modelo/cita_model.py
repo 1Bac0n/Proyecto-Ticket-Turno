@@ -34,12 +34,16 @@ class Cita:
         Valida que el formato de la CURP sea correcto usando RegEx.
         Formato: PETD800714HCLRNV02
         """
-        # 4 letras, 6 números, 1 (H/M), 5 letras, 2 (letra o número)
+        if not isinstance(curp, str):
+            return False
+
+        # Normalizar: quitar espacios y pasar a mayúsculas
+        curp_norm = curp.strip().upper()
+
+        # 4 letras, 6 números (YYMMDD), 1 letra H/M, 5 letras, 2 (letra o número)
         patron_curp = r"^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}$"
-        
-        if re.match(patron_curp, curp):
-            return True
-        return False
+
+        return re.match(patron_curp, curp_norm) is not None
 
     def _get_next_turno(self):
         """
@@ -146,6 +150,25 @@ class Cita:
         except sqlite3.Error as e:
             print(f"Error en la búsqueda: {e}")
             return []
+
+    @staticmethod
+    def get_by_curp_and_turno(curp, numero_turno):
+        """
+        Busca una cita por CURP y número de turno exactos. Devuelve la fila completa
+        (tupla) si se encuentra, o None en caso contrario.
+        """
+        try:
+            if not isinstance(curp, str):
+                return None
+
+            curp_norm = curp.strip().upper()
+            db = DatabaseManager()
+            cursor = db.get_cursor()
+            cursor.execute("SELECT * FROM Cita WHERE curp_alumno = ? AND numero_turno = ?", (curp_norm, numero_turno))
+            return cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"Error buscando cita por CURP y turno: {e}")
+            return None
 
     @staticmethod
     def delete_by_curp(curp):
