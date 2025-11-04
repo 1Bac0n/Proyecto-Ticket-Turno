@@ -1,0 +1,13 @@
+﻿# Ignorar la base de datos del subproyecto
+ProyectoFinalDiseño/citas.db
+
+# Ignorar caché de Python y archivos compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar entornos virtuales y carpetas de IDE
+env/
+.venv/
+.vscode/
