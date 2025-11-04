@@ -69,15 +69,25 @@ class Cita:
             return False, "Error: Formato de CURP inválido."
         
         try:
-            self.cursor.execute("SELECT numero_turno FROM Cita WHERE curp_alumno = ?", (self.curp_alumno,))
-            existe = self.cursor.fetchone()
+            # Asegurarnos que el cursor no esté en modo 'dict'
+            try:
+                self.cursor.row_factory = None
+            except: pass
+            
+            self.cursor.execute("SELECT numero_turno, estatus FROM Cita WHERE curp_alumno = ?", (self.curp_alumno,))
+            existe_tupla = self.cursor.fetchone()
 
-            if existe:
+            if existe_tupla:
+                # --- ACTUALIZAR (Update) ---
+                self.numero_turno = existe_tupla[0] # Asignamos el turno existente
                 
-                self.numero_turno = existe[0]
+                # Si un admin está guardando, usa el estatus que trae el objeto
+                # Si el público está guardando, fuerza 'Pendiente'
+                estatus_final = self.estatus if es_admin else "Pendiente"
                 
                 admin_fields = ", estatus = ?" if es_admin else ""
-                admin_values = (self.estatus,) if es_admin else ()
+                admin_values = (estatus_final,) if es_admin else ()
+
 
                 sql = f"""
                     UPDATE Cita SET
@@ -96,8 +106,8 @@ class Cita:
                 self.cursor.execute(sql, valores)
                 
             else:
-                
-                self.numero_turno = self._get_next_turno()
+                # --- CREAR (Create) ---
+                self.numero_turno = self._get_next_turno() # Asignamos el turno nuevo
                 if self.numero_turno is None:
                     return False, "Error al generar el número de turno."
 
@@ -112,21 +122,21 @@ class Cita:
                     self.curp_alumno, self.nombre_tutor, self.nombre_alumno,
                     self.paterno_alumno, self.materno_alumno, self.telefono_contacto,
                     self.correo_contacto, self.nivel_educativo, self.asunto,
-                    self.estatus, self.numero_turno, self.id_municipio
+                    "Pendiente", self.numero_turno, self.id_municipio # Forzar estatus 'Pendiente' al crear
                 )
                 self.cursor.execute(sql, valores)
             
             self.conn.commit()
             
-            mensaje_exito = self.curp_alumno if existe else self.numero_turno
-            return True, mensaje_exito
+            # Devolvemos el número de turno en ambos casos (Crear o Actualizar)
+            return True, self.numero_turno
 
         except sqlite3.Error as e:
             print(f"Error al guardar la cita: {e}")
             self.conn.rollback()
             return False, f"Error de base de datos: {e}"
 
-    #  Métodos para el Administrador 
+    # --- Métodos para el Administrador ---
 
     @staticmethod
     def get_by_curp_o_nombre(filtro):
@@ -161,7 +171,7 @@ class Cita:
             print(f"Error al eliminar: {e}")
             return False
 
-    # Métodos para el Dashboard 
+    # --- Métodos para el Dashboard ---
 
     @staticmethod
     def get_stats_dashboard(id_municipio=None):
@@ -214,7 +224,6 @@ class Cita:
             db.get_connection().rollback()
             return False
 
-    
     @staticmethod
     def get_by_curp_and_turno(curp, turno):
         """
@@ -225,25 +234,49 @@ class Cita:
             db = DatabaseManager()
             cursor = db.get_cursor()
             
-            # Hacemos que la consulta devuelva un diccionario
             cursor.row_factory = sqlite3.Row 
             
             cursor.execute(
                 "SELECT * FROM Cita WHERE curp_alumno = ? AND numero_turno = ?",
-                (curp, int(turno)) # Aseguramos que el turno sea un número
+                (curp, int(turno))
             )
             
             resultado = cursor.fetchone()
-            
-            # Restablecer el row_factory para no afectar otras consultas
             cursor.row_factory = None 
             
             if resultado:
-                # Convertimos el resultado (sqlite3.Row) a un diccionario estándar
                 return dict(resultado)
             else:
                 return None
                 
-        except (sqlite3.Error, ValueError) as e: # Capturamos también si el turno no es número
+        except (sqlite3.Error, ValueError) as e:
             print(f"Error al buscar por CURP y Turno: {e}")
             return None
+
+    # --- ¡¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA, DENTRO DE LA CLASE!! ---
+    @staticmethod
+    def check_pending(curp):
+        """
+        Verifica si existe una cita 'Pendiente' con una CURP específica.
+        Devuelve True si existe, False si no.
+        """
+        try:
+            db = DatabaseManager()
+            cursor = db.get_cursor()
+            cursor.row_factory = None # Asegurar que no sea un dict
+
+            cursor.execute(
+                "SELECT 1 FROM Cita WHERE curp_alumno = ? AND estatus = 'Pendiente'",
+                (curp,)
+            )
+            
+            resultado = cursor.fetchone()
+            
+            if resultado:
+                return True # Sí, existe una pendiente
+            else:
+                return False # No existe una pendiente
+                
+        except sqlite3.Error as e:
+            print(f"Error en check_pending: {e}")
+            return False # Asumir que no por seguridad
