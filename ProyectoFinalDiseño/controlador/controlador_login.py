@@ -1,8 +1,8 @@
 # controlador/controlador_login.py
 from modelo.usuario_model import Usuario
-# Importamos la clase VistaLogin, no el archivo
 from vista.vista_login import VistaLogin 
-
+from vista.vista_admin import VistaAdmin
+from controlador.controlador_admin import ControladorAdmin
 class ControladorLogin:
     
     def __init__(self, vista, modelo):
@@ -43,13 +43,14 @@ class ControladorLogin:
             self.vista.mostrar_error("Usuario o contraseña incorrectos.")
 
     def _abrir_ventana_admin(self):
-        # Este es el siguiente paso después de esto.
-        # Por ahora, solo imprimimos un mensaje.
-        print("TODO: Abrir la VistaAdmin y su Controlador.")
-        
-        # (Aquí es donde el proyecto crecerá)
-        # from vista.vista_admin import VistaAdmin
-        # from controlador.controlador_admin import ControladorAdmin
-        # self.vista_admin = VistaAdmin()
-        # self.controlador_admin = ControladorAdmin(self.vista_admin)
-        # self.vista_admin.mainloop()
+        """Abre la ventana de administración, crea su controlador y lanza su bucle."""
+        print("Abriendo la VistaAdmin...")
+
+        # 1. Creamos la nueva ventana de Admin
+        self.vista_admin = VistaAdmin()
+
+        # 2. Creamos su controlador
+        self.controlador_admin = ControladorAdmin(self.vista_admin)
+
+        # 3. Iniciamos el bucle de la nueva ventana
+        self.vista_admin.mainloop()
