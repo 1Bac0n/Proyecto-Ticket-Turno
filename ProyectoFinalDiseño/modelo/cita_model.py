@@ -34,7 +34,6 @@ class Cita:
         Valida que el formato de la CURP sea correcto usando RegEx.
         Formato: PETD800714HCLRNV02
         """
-        # 4 letras, 6 números, 1 (H/M), 5 letras, 2 (letra o número)
         patron_curp = r"^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}$"
         
         if re.match(patron_curp, curp):
@@ -51,15 +50,15 @@ class Cita:
                 "SELECT MAX(numero_turno) FROM Cita WHERE id_municipio = ?",
                 (self.id_municipio,)
             )
-            max_turno = self.cursor.fetchone()[0] # [0] para obtener el valor
+            max_turno = self.cursor.fetchone()[0]
             
             if max_turno is None:
-                return 1 # Es el primer turno de este municipio
+                return 1
             else:
                 return max_turno + 1
         except sqlite3.Error as e:
             print(f"Error calculando el siguiente turno: {e}")
-            return None # Indicar un error
+            return None
 
     def save(self, es_admin=False):
         """
@@ -75,7 +74,7 @@ class Cita:
 
             if existe:
                 # --- ACTUALIZAR (Update) ---
-                self.numero_turno = existe[0] # Reasignamos el turno que ya tenía
+                self.numero_turno = existe[0]
                 
                 admin_fields = ", estatus = ?" if es_admin else ""
                 admin_values = (self.estatus,) if es_admin else ()
@@ -118,7 +117,9 @@ class Cita:
                 self.cursor.execute(sql, valores)
             
             self.conn.commit()
-            return True, self.numero_turno 
+            
+            mensaje_exito = self.curp_alumno if existe else self.numero_turno
+            return True, mensaje_exito
 
         except sqlite3.Error as e:
             print(f"Error al guardar la cita: {e}")
@@ -166,7 +167,7 @@ class Cita:
     def get_stats_dashboard(id_municipio=None):
         """
         Obtiene los conteos de estatus (Pendiente, Resuelto)
-        para el dashboard. Si id_municipio es None, obtiene el total.
+        para el dashboard.
         """
         try:
             db = DatabaseManager()
@@ -187,7 +188,6 @@ class Cita:
             print(f"Error obteniendo estadísticas: {e}")
             return [('Pendiente', 0), ('Resuelto', 0)]
     
-    # --- ¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA, AHORA DENTRO DE LA CLASE! ---
     @staticmethod
     def actualizar_estatus(curp, nuevo_estatus):
         """
@@ -207,11 +207,43 @@ class Cita:
             )
             db.get_connection().commit()
             
-            # cursor.rowcount nos dice cuántas filas se afectaron.
-            # Si es > 0, significa que se actualizó.
             return cursor.rowcount > 0 
             
         except sqlite3.Error as e:
             print(f"Error al actualizar estatus: {e}")
             db.get_connection().rollback()
             return False
+
+    # --- ¡ESTA ES LA FUNCIÓN QUE FALTABA! ---
+    @staticmethod
+    def get_by_curp_and_turno(curp, turno):
+        """
+        Busca una cita específica por CURP y Número de Turno.
+        Devuelve los datos de la cita si la encuentra, o None si no.
+        """
+        try:
+            db = DatabaseManager()
+            cursor = db.get_cursor()
+            
+            # Hacemos que la consulta devuelva un diccionario
+            cursor.row_factory = sqlite3.Row 
+            
+            cursor.execute(
+                "SELECT * FROM Cita WHERE curp_alumno = ? AND numero_turno = ?",
+                (curp, int(turno)) # Aseguramos que el turno sea un número
+            )
+            
+            resultado = cursor.fetchone()
+            
+            # Restablecer el row_factory para no afectar otras consultas
+            cursor.row_factory = None 
+            
+            if resultado:
+                # Convertimos el resultado (sqlite3.Row) a un diccionario estándar
+                return dict(resultado)
+            else:
+                return None
+                
+        except (sqlite3.Error, ValueError) as e: # Capturamos también si el turno no es número
+            print(f"Error al buscar por CURP y Turno: {e}")
+            return None
