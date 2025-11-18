@@ -20,7 +20,9 @@ class VistaPublica(ctk.CTkToplevel):
         self.tabs.add("Registrar Cita")
         self.tabs.add("Consultar / Modificar Cita")
 
-        
+        # ======================================================
+        # --- Pestaña 1: Registrar Cita (EL FORMULARIO COMPLETO VA AQUÍ) ---
+        # ======================================================
         tab_registrar = self.tabs.tab("Registrar Cita")
         
         scroll_frame = ctk.CTkScrollableFrame(tab_registrar)
@@ -81,7 +83,6 @@ class VistaPublica(ctk.CTkToplevel):
 
         # Municipio
         ctk.CTkLabel(scroll_frame, text="Municipio donde estudia:*").pack(anchor="w", padx=20)
-        # Este ComboBox se llenará desde la BD por el controlador
         self.combo_municipio = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_municipio.pack(fill="x", padx=20, pady=(0, 10))
 
@@ -99,12 +100,12 @@ class VistaPublica(ctk.CTkToplevel):
         self.lbl_mensaje_registrar.pack(fill="x", padx=20, pady=10)
 
 
-        
-      
-      
+        # ======================================================
+        # --- Pestaña 2: Consultar / Modificar Cita (SOLO CAMPOS DE BÚSQUEDA) ---
+        # ======================================================
         tab_modificar = self.tabs.tab("Consultar / Modificar Cita")
         
-      
+        # (Este es el diseño correcto, sin el formulario completo)
         ctk.CTkLabel(tab_modificar, text="Aquí podrás consultar o modificar tu cita.").pack(pady=20)
         ctk.CTkLabel(tab_modificar, text="Ingresa tu CURP:").pack(pady=(10,0))
         self.entry_curp_mod = ctk.CTkEntry(tab_modificar, width=300)
@@ -116,50 +117,3 @@ class VistaPublica(ctk.CTkToplevel):
         
         self.btn_buscar_mod = ctk.CTkButton(tab_modificar, text="Buscar Cita para Modificar")
         self.btn_buscar_mod.pack(pady=20)
-
-        # --- Campos para mostrar y editar la cita encontrada ---
-        ctk.CTkLabel(tab_modificar, text="Datos de la Cita:", font=ctk.CTkFont(size=14, weight="bold")).pack(pady=(10,5))
-
-        ctk.CTkLabel(tab_modificar, text="Nombre Completo del Tutor:").pack(anchor="w", padx=20)
-        self.entry_nombre_tutor_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_nombre_tutor_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Nombre(s) del Alumno:").pack(anchor="w", padx=20)
-        self.entry_nombre_alumno_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_nombre_alumno_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Apellido Paterno:").pack(anchor="w", padx=20)
-        self.entry_paterno_alumno_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_paterno_alumno_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Apellido Materno:").pack(anchor="w", padx=20)
-        self.entry_materno_alumno_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_materno_alumno_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Teléfono de Contacto:").pack(anchor="w", padx=20)
-        self.entry_telefono_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_telefono_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Correo de Contacto:").pack(anchor="w", padx=20)
-        self.entry_correo_mod = ctk.CTkEntry(tab_modificar, width=400)
-        self.entry_correo_mod.pack(padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Nivel Educativo:").pack(anchor="w", padx=20)
-        niveles = ["Preescolar", "Primaria", "Secundaria", "Preparatoria", "Universidad"]
-        self.combo_nivel_mod = ctk.CTkComboBox(tab_modificar, values=niveles)
-        self.combo_nivel_mod.pack(fill="x", padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Municipio:").pack(anchor="w", padx=20)
-        self.combo_municipio_mod = ctk.CTkComboBox(tab_modificar, values=["Cargando..."])
-        self.combo_municipio_mod.pack(fill="x", padx=20, pady=(0,10))
-
-        ctk.CTkLabel(tab_modificar, text="Asunto:").pack(anchor="w", padx=20)
-        self.entry_asunto_mod = ctk.CTkTextbox(tab_modificar, height=80)
-        self.entry_asunto_mod.pack(fill="x", padx=20, pady=(0,10))
-
-        # Mensaje y botón de guardar
-        self.lbl_mensaje_mod = ctk.CTkLabel(tab_modificar, text="", text_color="red")
-        self.lbl_mensaje_mod.pack(pady=(5,5))
-
-        self.btn_guardar_mod = ctk.CTkButton(tab_modificar, text="Guardar Cambios")
-        self.btn_guardar_mod.pack(pady=(5,20))
