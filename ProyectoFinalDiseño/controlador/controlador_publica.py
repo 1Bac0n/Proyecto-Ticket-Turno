@@ -18,7 +18,7 @@ class ControladorPublica:
         self.mapa_niveles = {}
         self.mapa_tramites = {}
         
-        # --- ¡ASEGÚRATE DE QUE AMBOS BOTONES ESTÉN CONECTADOS! ---
+        
         self.vista.btn_guardar_cita.configure(command=self._guardar_cita)
         self.vista.btn_buscar_mod.configure(command=self._buscar_cita_modificar)
         

@@ -59,7 +59,6 @@ class ControladorLogin:
         # 3. Iniciamos el bucle de la nueva ventana
         self.vista_admin.mainloop()
 
-    # --- ¡AQUÍ ESTÁ LA FUNCIÓN CORREGIDA Y MOVIDA DENTRO DE LA CLASE! ---
     def _abrir_ventana_publica(self):
         """
         Abre la ventana emergente para el registro de citas públicas.

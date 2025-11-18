@@ -62,7 +62,7 @@ class DatabaseManager:
         )
         """)
         
-        # --- ¡NUEVAS TABLAS DE CATÁLOGO! ---
+       
         # 3. Catálogo Nivel
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS Nivel (
@@ -80,7 +80,7 @@ class DatabaseManager:
         """)
         # --- FIN DE NUEVAS TABLAS ---
 
-        # 5. Tabla principal de Citas (¡ACTUALIZADA!)
+        # 5. Tabla principal de Citas 
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS Cita (
             curp_alumno TEXT PRIMARY KEY NOT NULL,

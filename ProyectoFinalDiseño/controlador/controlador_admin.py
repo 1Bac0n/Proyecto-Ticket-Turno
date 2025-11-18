@@ -17,7 +17,7 @@ class ControladorAdmin:
         self.nivel_model = Nivel
         self.tipotramite_model = TipoTramite
         
-        # --- Variables para Dashboard (¡ACTUALIZADAS!) ---
+        # --- Variables para Dashboard  ---
         self.mapa_municipios_dash = {}
         self.mapa_niveles_dash = {}
         self.mapa_tramites_dash = {}
@@ -65,7 +65,7 @@ class ControladorAdmin:
         self._actualizar_lista_tramites()
         self._limpiar_form_tramite()
         
-        self._cargar_comboboxes_dashboard() # <-- ¡Función actualizada!
+        self._cargar_comboboxes_dashboard() 
         self._actualizar_dashboard()      
 
     # ======================================================
@@ -427,7 +427,6 @@ class ControladorAdmin:
                 ctk.CTkLabel(self.vista.frame_lista_citas, text="No se encontraron citas con ese criterio.").pack(pady=10)
                 return
 
-            # --- ¡CABECERA DE LISTA CORREGIDA! ---
             header_frame = ctk.CTkFrame(self.vista.frame_lista_citas, fg_color="gray20")
             header_frame.pack(fill="x", pady=(0, 5))
             ctk.CTkLabel(header_frame, text="CURP", width=160, font=ctk.CTkFont(weight="bold"), anchor="w").pack(side="left", padx=5)

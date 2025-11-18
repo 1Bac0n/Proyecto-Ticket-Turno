@@ -71,7 +71,7 @@ class VistaAdmin(ctk.CTk):
         self.btn_poner_pendiente_cita.pack(side="left", padx=10, pady=5)
 
         # ======================================================
-        # --- 2. Pestaña "Dashboard" (¡ACTUALIZADA!) ---
+        # --- 2. Pestaña "Dashboard" ---
         # ======================================================
         tab_dashboard = self.tab_view.tab("Dashboard")
         
@@ -84,13 +84,13 @@ class VistaAdmin(ctk.CTk):
         self.combo_municipios_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])
         self.combo_municipios_dash.pack(side="left", padx=5)
 
-        # --- Filtro 2: Nivel (NUEVO) ---
+        # --- Filtro 2: Nivel  ---
         lbl_filtro_nivel = ctk.CTkLabel(frame_filtros_dash, text="Nivel:")
         lbl_filtro_nivel.pack(side="left", padx=(10, 5))
         self.combo_niveles_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])
         self.combo_niveles_dash.pack(side="left", padx=5)
 
-        # --- Filtro 3: Trámite (NUEVO) ---
+        # --- Filtro 3: Trámite  ---
         lbl_filtro_tramite = ctk.CTkLabel(frame_filtros_dash, text="Trámite:")
         lbl_filtro_tramite.pack(side="left", padx=(10, 5))
         self.combo_tramites_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])

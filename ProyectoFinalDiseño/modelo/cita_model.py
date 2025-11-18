@@ -163,7 +163,7 @@ class Cita:
 
     # --- Métodos para el Dashboard ---
     
-    # --- ¡¡ESTA FUNCIÓN ESTÁ ACTUALIZADA!! ---
+
     @staticmethod
     def get_stats_dashboard(id_municipio=None, id_nivel=None, id_tipotramite=None):
         """

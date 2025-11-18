@@ -67,13 +67,13 @@ class VistaPublica(ctk.CTkToplevel):
         lbl_frame_tramite = ctk.CTkLabel(scroll_frame, text="Datos del Trámite", font=ctk.CTkFont(size=14, weight="bold"))
         lbl_frame_tramite.pack(pady=(10, 5), fill="x", padx=10)
 
-        # --- ¡COMBOBOX DE NIVEL ACTUALIZADO! ---
+        # --- ¡COMBOBOX DE NIVEL! ---
         ctk.CTkLabel(scroll_frame, text="Nivel que cursa el alumno:*").pack(anchor="w", padx=20)
         # Ya no tiene una lista fija, se cargará desde el controlador
         self.combo_nivel = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_nivel.pack(fill="x", padx=20, pady=(0, 10))
 
-        # --- ¡COMBOBOX DE MUNICIPIO (YA EXISTÍA)! ---
+        # --- ¡COMBOBOX DE MUNICIPIO ! ---
         ctk.CTkLabel(scroll_frame, text="Municipio donde estudia:*").pack(anchor="w", padx=20)
         self.combo_municipio = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_municipio.pack(fill="x", padx=20, pady=(0, 10))
@@ -83,7 +83,7 @@ class VistaPublica(ctk.CTkToplevel):
         self.combo_tipotramite = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_tipotramite.pack(fill="x", padx=20, pady=(0, 10))
 
-        # --- ¡TEXTBOX DE ASUNTO (YA EXISTÍA)! ---
+        # --- ¡TEXTBOX DE ASUNTO ! ---
         ctk.CTkLabel(scroll_frame, text="Asunto a tratar (detalles):").pack(anchor="w", padx=20)
         self.entry_asunto = ctk.CTkTextbox(scroll_frame, height=80)
         self.entry_asunto.pack(fill="x", padx=20, pady=(0, 10))
