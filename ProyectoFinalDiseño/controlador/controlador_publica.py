@@ -1,7 +1,8 @@
 # controlador/controlador_publica.py
 from modelo.municipio_model import Municipio
 from modelo.cita_model import Cita
-# Importamos la librería de pop-ups
+from modelo.nivel_model import Nivel
+from modelo.tipotramite_model import TipoTramite
 from tkinter import messagebox 
 
 class ControladorPublica:
@@ -10,41 +11,67 @@ class ControladorPublica:
         self.vista = vista_publica
         self.municipio_model = Municipio
         self.cita_model = Cita
+        self.nivel_model = Nivel
+        self.tipotramite_model = TipoTramite
         
-        # Guardamos los municipios (id -> nombre)
         self.mapa_municipios = {} 
+        self.mapa_niveles = {}
+        self.mapa_tramites = {}
         
-        # Conectar botones
+        # --- ¡ASEGÚRATE DE QUE AMBOS BOTONES ESTÉN CONECTADOS! ---
         self.vista.btn_guardar_cita.configure(command=self._guardar_cita)
         self.vista.btn_buscar_mod.configure(command=self._buscar_cita_modificar)
         
-        # Cargar datos iniciales
-        self._cargar_municipios()
+        self._cargar_comboboxes()
 
-    def _cargar_municipios(self):
-        """
-        Obtiene los municipios del modelo y los pone en el ComboBox.
-        """
+    def _cargar_comboboxes(self):
+        """Función genérica para cargar todos los catálogos en los ComboBoxes."""
         try:
+            # 1. Cargar Municipios
             municipios_tuplas = self.municipio_model.get_all()
-            
             nombres_municipios = []
             for id_muni, nombre in municipios_tuplas:
                 nombres_municipios.append(nombre)
                 self.mapa_municipios[nombre] = id_muni
-            
             self.vista.combo_municipio.configure(values=nombres_municipios)
             if nombres_municipios:
                 self.vista.combo_municipio.set(nombres_municipios[0])
-            
         except Exception as e:
             print(f"Error cargando municipios: {e}")
             self.vista.combo_municipio.configure(values=["Error al cargar"])
+            
+        try:
+            # 2. Cargar Niveles
+            niveles_tuplas = self.nivel_model.get_all()
+            nombres_niveles = []
+            for id_nivel, nombre in niveles_tuplas:
+                nombres_niveles.append(nombre)
+                self.mapa_niveles[nombre] = id_nivel
+            self.vista.combo_nivel.configure(values=nombres_niveles)
+            if nombres_niveles:
+                self.vista.combo_nivel.set(nombres_niveles[0])
+        except Exception as e:
+            print(f"Error cargando niveles: {e}")
+            self.vista.combo_nivel.configure(values=["Error al cargar"])
+            
+        try:
+            # 3. Cargar Tipos de Trámite
+            tramites_tuplas = self.tipotramite_model.get_all()
+            nombres_tramites = []
+            for id_tramite, nombre in tramites_tuplas:
+                nombres_tramites.append(nombre)
+                self.mapa_tramites[nombre] = id_tramite
+            self.vista.combo_tipotramite.configure(values=nombres_tramites)
+            if nombres_tramites:
+                self.vista.combo_tipotramite.set(nombres_tramites[0])
+        except Exception as e:
+            print(f"Error cargando trámites: {e}")
+            self.vista.combo_tipotramite.configure(values=["Error al cargar"])
+
 
     def _guardar_cita(self):
         """
-        Toma todos los datos del formulario, los valida y los guarda
-        (ya sea para crear una NUEVA cita o ACTUALIZAR una existente).
+        Toma todos los datos del formulario, los valida y los guarda.
         """
         try:
             self.vista.entry_curp.configure(state="normal")
@@ -57,18 +84,23 @@ class ControladorPublica:
             materno_alumno = self.vista.entry_materno_alumno.get()
             telefono = self.vista.entry_telefono.get()
             correo = self.vista.entry_correo.get()
-            nivel = self.vista.combo_nivel.get()
             asunto = self.vista.entry_asunto.get("1.0", "end-1c")
             
             nombre_municipio_sel = self.vista.combo_municipio.get()
             id_municipio_sel = self.mapa_municipios.get(nombre_municipio_sel)
+            nombre_nivel_sel = self.vista.combo_nivel.get()
+            id_nivel_sel = self.mapa_niveles.get(nombre_nivel_sel)
+            nombre_tramite_sel = self.vista.combo_tipotramite.get()
+            id_tramite_sel = self.mapa_tramites.get(nombre_tramite_sel)
             
             modo_modificar = (self.vista.btn_guardar_cita.cget("text") == "Guardar Cambios")
 
             # 2. Validaciones básicas
-            if not all([curp, nombre_tutor, nombre_alumno, paterno_alumno, id_municipio_sel]):
+            campos_obligatorios = [curp, nombre_tutor, nombre_alumno, paterno_alumno, 
+                                   id_municipio_sel, id_nivel_sel, id_tramite_sel]
+            if not all(campos_obligatorios):
                 messagebox.showerror("Error de Validación", 
-                                     "Los campos con * son obligatorios:\n- CURP\n- Nombre Tutor\n- Nombre Alumno\n- Paterno Alumno\n- Municipio",
+                                     "Todos los campos con * son obligatorios.",
                                      parent=self.vista)
                 if modo_modificar:
                     self.vista.entry_curp.configure(state="disabled")
@@ -78,7 +110,7 @@ class ControladorPublica:
             if not modo_modificar:
                 if self.cita_model.check_pending(curp):
                     messagebox.showerror("Registro Bloqueado",
-                                         "Ya existe una cita 'Pendiente' con esta CURP.\nNo puede registrar una nueva hasta que la anterior sea 'Resuelta'.",
+                                         "Ya existe una cita 'Pendiente' con esta CURP.",
                                          parent=self.vista)
                     self.vista.entry_curp.configure(state="normal")
                     return
@@ -90,29 +122,24 @@ class ControladorPublica:
                 nombre_alumno=nombre_alumno,
                 paterno_alumno=paterno_alumno,
                 materno_alumno=materno_alumno,
-                id_municipio=id_municipio_sel,
                 telefono_contacto=telefono,
                 correo_contacto=correo,
-                nivel_educativo=nivel,
                 asunto=asunto,
-                estatus="Pendiente" 
+                id_municipio=id_municipio_sel,
+                id_nivel=id_nivel_sel,
+                id_tipotramite=id_tramite_sel
             )
             
             # 5. Guardar
             exito, mensaje = nueva_cita.save(es_admin=False)
             
             if exito:
-                turno_asignado = mensaje # El modelo ahora SIEMPRE devuelve el turno
-                
+                turno_asignado = mensaje
+                texto_exito = f"¡Cita registrada con éxito!\nSu número de turno es: {turno_asignado}"
                 if modo_modificar:
-                    self.vista.lbl_mensaje_registrar.configure(
-                        text=f"¡Cita {curp} actualizada con éxito!\nSu número de turno sigue siendo: {turno_asignado}",
-                        text_color="green")
-                else:
-                    self.vista.lbl_mensaje_registrar.configure(
-                        text=f"¡Cita registrada con éxito!\nSu número de turno es: {turno_asignado}",
-                        text_color="green")
-
+                    texto_exito = f"¡Cita {curp} actualizada con éxito!\nSu número de turno sigue siendo: {turno_asignado}"
+                
+                self.vista.lbl_mensaje_registrar.configure(text=texto_exito, text_color="green")
                 self.vista.btn_guardar_cita.configure(state="disabled")
                 self.vista.entry_curp.configure(state="disabled")
                 
@@ -123,7 +150,6 @@ class ControladorPublica:
 
         except Exception as e:
             messagebox.showerror("Error Inesperado", f"Ocurrió un error: {e}", parent=self.vista)
-            # Manejo de error para re-habilitar la CURP si falla
             if self.vista.btn_guardar_cita.cget("text") != "Guardar Cambios":
                  self.vista.entry_curp.configure(state="normal")
 
@@ -149,9 +175,7 @@ class ControladorPublica:
         
         if cita_data:
             print("Cita encontrada, poblando formulario...")
-            # ¡Llama a la función que rellena el formulario de la Pestaña 1!
             self._poblar_formulario(cita_data)
-            # ¡Cambia a la Pestaña 1!
             self.vista.tabs.set("Registrar Cita")
         else:
             messagebox.showerror("No Encontrada", "No se encontró ninguna cita con esa CURP y Número de Turno.", parent=self.vista)
@@ -165,7 +189,7 @@ class ControladorPublica:
         self.vista.entry_curp.configure(state="normal")
         self.vista.btn_guardar_cita.configure(state="normal")
         
-        # Limpiar campos (¡ESTOS SON LOS NOMBRES CORRECTOS!)
+        # Limpiar campos (NOMBRES DE LA PESTAÑA 1)
         self.vista.entry_curp.delete(0, "end")
         self.vista.entry_nombre_alumno.delete(0, "end")
         self.vista.entry_paterno_alumno.delete(0, "end")
@@ -176,7 +200,7 @@ class ControladorPublica:
         self.vista.entry_asunto.delete("1.0", "end")
         self.vista.lbl_mensaje_registrar.configure(text="")
         
-        # Rellenar campos (¡ESTOS SON LOS NOMBRES CORRECTOS!)
+        # Rellenar campos (NOMBRES DE LA PESTAÑA 1)
         self.vista.entry_curp.insert(0, cita_dict.get("curp_alumno", ""))
         self.vista.entry_nombre_alumno.insert(0, cita_dict.get("nombre_alumno", ""))
         self.vista.entry_paterno_alumno.insert(0, cita_dict.get("paterno_alumno", ""))
@@ -186,15 +210,22 @@ class ControladorPublica:
         self.vista.entry_correo.insert(0, cita_dict.get("correo_contacto", ""))
         self.vista.entry_asunto.insert("1.0", cita_dict.get("asunto", ""))
         
-        self.vista.combo_nivel.set(cita_dict.get("nivel_educativo", "Primaria"))
+        # Función auxiliar para buscar el nombre del ID en el mapa
+        def get_key_from_value(mapa, id_valor):
+            for nombre, id_val in mapa.items():
+                if id_val == id_valor:
+                    return nombre
+            return "" 
         
+        # Seleccionar ComboBoxes
         id_muni = cita_dict.get("id_municipio")
-        nombre_muni_encontrado = ""
-        for nombre, id_val in self.mapa_municipios.items():
-            if id_val == id_muni:
-                nombre_muni_encontrado = nombre
-                break
-        self.vista.combo_municipio.set(nombre_muni_encontrado)
+        self.vista.combo_municipio.set(get_key_from_value(self.mapa_municipios, id_muni))
+        
+        id_nivel = cita_dict.get("id_nivel")
+        self.vista.combo_nivel.set(get_key_from_value(self.mapa_niveles, id_nivel))
+        
+        id_tramite = cita_dict.get("id_tipotramite")
+        self.vista.combo_tipotramite.set(get_key_from_value(self.mapa_tramites, id_tramite))
         
         self.vista.btn_guardar_cita.configure(text="Guardar Cambios")
         self.vista.entry_curp.configure(state="disabled")

@@ -9,7 +9,6 @@ class VistaPublica(ctk.CTkToplevel):
         self.geometry("600x750")
         self.resizable(False, False)
         
-        # Hacemos que esta ventana se quede por encima de la principal
         self.transient(parent)
         self.grab_set()
 
@@ -21,7 +20,7 @@ class VistaPublica(ctk.CTkToplevel):
         self.tabs.add("Consultar / Modificar Cita")
 
         # ======================================================
-        # --- Pestaña 1: Registrar Cita (EL FORMULARIO COMPLETO VA AQUÍ) ---
+        # --- Pestaña 1: Registrar Cita ---
         # ======================================================
         tab_registrar = self.tabs.tab("Registrar Cita")
         
@@ -32,22 +31,18 @@ class VistaPublica(ctk.CTkToplevel):
         lbl_frame_alumno = ctk.CTkLabel(scroll_frame, text="Datos del Alumno", font=ctk.CTkFont(size=14, weight="bold"))
         lbl_frame_alumno.pack(pady=(10, 5), fill="x", padx=10)
         
-        # CURP
         ctk.CTkLabel(scroll_frame, text="CURP del Alumno:*").pack(anchor="w", padx=20)
         self.entry_curp = ctk.CTkEntry(scroll_frame, placeholder_text="PETD800714HCLRNV02")
         self.entry_curp.pack(fill="x", padx=20, pady=(0, 10))
 
-        # Nombre Alumno
         ctk.CTkLabel(scroll_frame, text="Nombre(s) del Alumno:*").pack(anchor="w", padx=20)
         self.entry_nombre_alumno = ctk.CTkEntry(scroll_frame)
         self.entry_nombre_alumno.pack(fill="x", padx=20, pady=(0, 10))
         
-        # Apellido Paterno
         ctk.CTkLabel(scroll_frame, text="Apellido Paterno Alumno:*").pack(anchor="w", padx=20)
         self.entry_paterno_alumno = ctk.CTkEntry(scroll_frame)
         self.entry_paterno_alumno.pack(fill="x", padx=20, pady=(0, 10))
         
-        # Apellido Materno
         ctk.CTkLabel(scroll_frame, text="Apellido Materno Alumno:").pack(anchor="w", padx=20)
         self.entry_materno_alumno = ctk.CTkEntry(scroll_frame)
         self.entry_materno_alumno.pack(fill="x", padx=20, pady=(0, 10))
@@ -56,17 +51,14 @@ class VistaPublica(ctk.CTkToplevel):
         lbl_frame_tutor = ctk.CTkLabel(scroll_frame, text="Datos del Tutor (Contacto)", font=ctk.CTkFont(size=14, weight="bold"))
         lbl_frame_tutor.pack(pady=(10, 5), fill="x", padx=10)
 
-        # Nombre Tutor
         ctk.CTkLabel(scroll_frame, text="Nombre Completo del Tutor:*").pack(anchor="w", padx=20)
         self.entry_nombre_tutor = ctk.CTkEntry(scroll_frame)
         self.entry_nombre_tutor.pack(fill="x", padx=20, pady=(0, 10))
 
-        # Teléfono
         ctk.CTkLabel(scroll_frame, text="Teléfono de Contacto:").pack(anchor="w", padx=20)
         self.entry_telefono = ctk.CTkEntry(scroll_frame)
         self.entry_telefono.pack(fill="x", padx=20, pady=(0, 10))
 
-        # Correo
         ctk.CTkLabel(scroll_frame, text="Correo de Contacto:").pack(anchor="w", padx=20)
         self.entry_correo = ctk.CTkEntry(scroll_frame)
         self.entry_correo.pack(fill="x", padx=20, pady=(0, 10))
@@ -75,20 +67,25 @@ class VistaPublica(ctk.CTkToplevel):
         lbl_frame_tramite = ctk.CTkLabel(scroll_frame, text="Datos del Trámite", font=ctk.CTkFont(size=14, weight="bold"))
         lbl_frame_tramite.pack(pady=(10, 5), fill="x", padx=10)
 
-        # Nivel Educativo
-        ctk.CTkLabel(scroll_frame, text="Nivel que cursa el alumno:").pack(anchor="w", padx=20)
-        niveles = ["Preescolar", "Primaria", "Secundaria", "Preparatoria", "Universidad"]
-        self.combo_nivel = ctk.CTkComboBox(scroll_frame, values=niveles)
+        # --- ¡COMBOBOX DE NIVEL ACTUALIZADO! ---
+        ctk.CTkLabel(scroll_frame, text="Nivel que cursa el alumno:*").pack(anchor="w", padx=20)
+        # Ya no tiene una lista fija, se cargará desde el controlador
+        self.combo_nivel = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_nivel.pack(fill="x", padx=20, pady=(0, 10))
 
-        # Municipio
+        # --- ¡COMBOBOX DE MUNICIPIO (YA EXISTÍA)! ---
         ctk.CTkLabel(scroll_frame, text="Municipio donde estudia:*").pack(anchor="w", padx=20)
         self.combo_municipio = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
         self.combo_municipio.pack(fill="x", padx=20, pady=(0, 10))
 
-        # Asunto
-        ctk.CTkLabel(scroll_frame, text="Asunto a tratar:").pack(anchor="w", padx=20)
-        self.entry_asunto = ctk.CTkTextbox(scroll_frame, height=100)
+        # --- ¡NUEVO COMBOBOX DE TIPO DE TRÁMITE! ---
+        ctk.CTkLabel(scroll_frame, text="Tipo de Trámite:*").pack(anchor="w", padx=20)
+        self.combo_tipotramite = ctk.CTkComboBox(scroll_frame, values=["Cargando..."])
+        self.combo_tipotramite.pack(fill="x", padx=20, pady=(0, 10))
+
+        # --- ¡TEXTBOX DE ASUNTO (YA EXISTÍA)! ---
+        ctk.CTkLabel(scroll_frame, text="Asunto a tratar (detalles):").pack(anchor="w", padx=20)
+        self.entry_asunto = ctk.CTkTextbox(scroll_frame, height=80)
         self.entry_asunto.pack(fill="x", padx=20, pady=(0, 10))
         
         # --- Botón de Acción ---
@@ -101,11 +98,10 @@ class VistaPublica(ctk.CTkToplevel):
 
 
         # ======================================================
-        # --- Pestaña 2: Consultar / Modificar Cita (SOLO CAMPOS DE BÚSQUEDA) ---
+        # --- Pestaña 2: Consultar / Modificar Cita ---
         # ======================================================
         tab_modificar = self.tabs.tab("Consultar / Modificar Cita")
         
-        # (Este es el diseño correcto, sin el formulario completo)
         ctk.CTkLabel(tab_modificar, text="Aquí podrás consultar o modificar tu cita.").pack(pady=20)
         ctk.CTkLabel(tab_modificar, text="Ingresa tu CURP:").pack(pady=(10,0))
         self.entry_curp_mod = ctk.CTkEntry(tab_modificar, width=300)

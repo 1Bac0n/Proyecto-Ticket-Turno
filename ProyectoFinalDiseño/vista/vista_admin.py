@@ -7,9 +7,9 @@ class VistaAdmin(ctk.CTk):
         super().__init__()
 
         self.title("Panel de Administrador - Sistema de Turnos")
-        self.geometry("1100x700") # Un tamaño más grande
+        self.geometry("1100x700")
 
-        # --- Frame Superior (para el menú/botón de salida) ---
+        # --- Frame Superior ---
         frame_top = ctk.CTkFrame(self, height=50)
         frame_top.pack(fill="x", side="top", padx=10, pady=(10, 0))
 
@@ -21,23 +21,21 @@ class VistaAdmin(ctk.CTk):
         self.btn_cerrar_sistema = ctk.CTkButton(frame_top, text="Cerrar Sistema", fg_color="red")
         self.btn_cerrar_sistema.pack(side="right", padx=20)
 
-        # --- Sistema de Pestañas (Tabs) ---
+        # --- Sistema de Pestañas ---
         self.tab_view = ctk.CTkTabview(self, anchor="w")
         self.tab_view.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # --- ¡PESTAÑAS ACTUALIZADAS! ---
         self.tab_view.add("Gestión de Citas")
         self.tab_view.add("Dashboard")
         self.tab_view.add("Gestión de Municipios")
-        self.tab_view.add("Gestión de Niveles")     # <-- NUEVA
-        self.tab_view.add("Gestión de Trámites") # <-- NUEVA
+        self.tab_view.add("Gestión de Niveles")
+        self.tab_view.add("Gestión de Trámites")
 
         # ======================================================
-        # --- 1. Contenido de la Pestaña "Gestión de Citas" ---
+        # --- 1. Pestaña "Gestión de Citas" ---
         # ======================================================
         tab_citas = self.tab_view.tab("Gestión de Citas")
         
-        # Frame para buscar
         frame_buscar = ctk.CTkFrame(tab_citas)
         frame_buscar.pack(fill="x", padx=10, pady=10)
 
@@ -50,12 +48,10 @@ class VistaAdmin(ctk.CTk):
         self.btn_buscar_cita = ctk.CTkButton(frame_buscar, text="Buscar")
         self.btn_buscar_cita.pack(side="left", padx=5)
 
-        # Frame con scroll para la lista de resultados de citas
         self.frame_lista_citas = ctk.CTkScrollableFrame(tab_citas)
         self.frame_lista_citas.pack(fill="both", expand=True, padx=10, pady=10)
-        self.frames_citas = {} # Diccionario para guardar frames
+        self.frames_citas = {}
 
-        # Frame para botones de acción (Modificar, Eliminar, Cambiar Estatus)
         frame_acciones_citas = ctk.CTkFrame(tab_citas)
         frame_acciones_citas.pack(fill="x", padx=10, pady=10)
         
@@ -75,22 +71,36 @@ class VistaAdmin(ctk.CTk):
         self.btn_poner_pendiente_cita.pack(side="left", padx=10, pady=5)
 
         # ======================================================
-        # --- 2. Contenido de la Pestaña "Dashboard" ---
+        # --- 2. Pestaña "Dashboard" (¡ACTUALIZADA!) ---
         # ======================================================
         tab_dashboard = self.tab_view.tab("Dashboard")
         
         frame_filtros_dash = ctk.CTkFrame(tab_dashboard)
         frame_filtros_dash.pack(fill="x", padx=10, pady=10)
 
+        # --- Filtro 1: Municipio ---
         lbl_filtro_muni = ctk.CTkLabel(frame_filtros_dash, text="Filtrar por Municipio:")
-        lbl_filtro_muni.pack(side="left", padx=5)
-        
+        lbl_filtro_muni.pack(side="left", padx=(10, 5))
         self.combo_municipios_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])
         self.combo_municipios_dash.pack(side="left", padx=5)
 
-        self.btn_refrescar_dash = ctk.CTkButton(frame_filtros_dash, text="Refrescar Gráfica")
-        self.btn_refrescar_dash.pack(side="left", padx=5)
+        # --- Filtro 2: Nivel (NUEVO) ---
+        lbl_filtro_nivel = ctk.CTkLabel(frame_filtros_dash, text="Nivel:")
+        lbl_filtro_nivel.pack(side="left", padx=(10, 5))
+        self.combo_niveles_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])
+        self.combo_niveles_dash.pack(side="left", padx=5)
 
+        # --- Filtro 3: Trámite (NUEVO) ---
+        lbl_filtro_tramite = ctk.CTkLabel(frame_filtros_dash, text="Trámite:")
+        lbl_filtro_tramite.pack(side="left", padx=(10, 5))
+        self.combo_tramites_dash = ctk.CTkComboBox(frame_filtros_dash, values=["Todos"])
+        self.combo_tramites_dash.pack(side="left", padx=5)
+        
+        # --- Botón de Refrescar ---
+        self.btn_refrescar_dash = ctk.CTkButton(frame_filtros_dash, text="Refrescar Gráfica")
+        self.btn_refrescar_dash.pack(side="left", padx=20)
+
+        # Frame para la gráfica
         self.frame_grafica = ctk.CTkFrame(tab_dashboard, fg_color="gray20")
         self.frame_grafica.pack(fill="both", expand=True, padx=10, pady=10)
         
@@ -98,7 +108,7 @@ class VistaAdmin(ctk.CTk):
         lbl_placeholder_grafica.place(relx=0.5, rely=0.5, anchor="center")
 
         # ======================================================
-        # --- 3. Contenido de la Pestaña "Gestión de Municipios" ---
+        # --- 3. Pestaña "Gestión de Municipios" ---
         # ======================================================
         tab_municipios = self.tab_view.tab("Gestión de Municipios")
         
@@ -127,7 +137,7 @@ class VistaAdmin(ctk.CTk):
         self.labels_municipios = {} 
 
         # ======================================================
-        # --- 4. (NUEVA) Pestaña "Gestión de Niveles" ---
+        # --- 4. Pestaña "Gestión de Niveles" ---
         # ======================================================
         tab_niveles = self.tab_view.tab("Gestión de Niveles")
         
@@ -156,7 +166,7 @@ class VistaAdmin(ctk.CTk):
         self.labels_niveles = {}
 
         # ======================================================
-        # --- 5. (NUEVA) Pestaña "Gestión de Trámites" ---
+        # --- 5. Pestaña "Gestión de Trámites" ---
         # ======================================================
         tab_tramites = self.tab_view.tab("Gestión de Trámites")
         
